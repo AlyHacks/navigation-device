@@ -1,6 +1,6 @@
 const int trigPin = 8; //this sets up the trigger pin, which emits the soundwave for detection
 const int echoPin = 7; //this pin recieves the signal, or sound, and tells arduino how long it took
-const int ledPin = 6; //this is the pin for LED
+const int ledPin = 2; //this is the pin for LED
 
 
 void setup() {
@@ -27,15 +27,12 @@ void loop() {
   Serial.print(distance);
   Serial.println(" cm"); //println here so that each distance reading isn't all on the same line, ln makes sure it prints, but the next string is on a different line
   
-  if (10 < distance < 30){
+  if (10 < distance && distance < 30){
     digitalWrite(ledPin, HIGH); //led stays on if there is an object that is less than 30 cm away
-  } else if (distance < 10){
-      while (distance < 10){    //led blinks if 10 cm or less away
+  } else if (distance <= 10){   //led blinks if 10 cm or less away
         digitalWrite(ledPin, HIGH);
-        delayMicroseconds(3);
+        delayMicroseconds(500);
         digitalWrite(ledPin,LOW);
-      }
-    
   } else {
       digitalWrite(ledPin, LOW); //if faether than 30 cm turn off led
   }
