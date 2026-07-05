@@ -3,10 +3,12 @@ const int echoPin = 7; //this pin recieves the signal, or sound, and tells ardui
 const int ledPin = 2; //this is the pin for LED
 
 
+
+
 void setup() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  pinMode(ledPin, OUTPUT);
+  digitalWrite(trigPin, OUTPUT);
+  digitalWrite(echoPin, INPUT);
+  digitalWrite(ledPin, OUTPUT);
   Serial.begin(9600); //sends data in 9600 bits/sec or 9600 baud
 }
 
@@ -15,9 +17,9 @@ void loop() {
   float distance; //variable distance, type is float
 
   //digitalWrite is a function that allows to set pins on HIGH or LOW
-  digitalWrite(trigPin, LOW); //sets the voltage to LOW or 0 = pre-setting for the actual program 
+  pinMode(trigPin, LOW); //sets the voltage to LOW or 0 = pre-setting for the actual program 
   delayMicroseconds(2); //pauses program for 2 microseconds, tiny buffer for pre-setting
-  digitalWrite(trigPin, HIGH); //emits sound pulse
+  pinMode(trigPin, HIGH); //emits sound pulse
   delayMicroseconds(10); //wait for 10 microseconds to allow for pulses
   digitalWrite(trigPin, LOW); //ends the 10 microsecond pulse
 
