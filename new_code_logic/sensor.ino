@@ -110,13 +110,6 @@ void setup() {
    while (1);
  }
 
-
-
-
-
-
-
-
 // Register the send callback
  esp_now_register_send_cb(OnDataSent);
  // Register peer
@@ -161,23 +154,11 @@ void loop() {
  distance = sensor.read();
 
 
-
-
-
-
-
-
  // Send message via ESP-NOW
  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &distance, sizeof(distance));
 
-
-
-
  Serial.print(distance);
  if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-
-
-
 
  Serial.println();
  if (result == ESP_OK) {
