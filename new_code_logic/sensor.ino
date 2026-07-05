@@ -8,11 +8,7 @@
 //#include <TimeLib.h>
 
 
-
-
 const int ledPin = 4;
-
-
 
 
 // Create a structured object
@@ -30,14 +26,6 @@ unsigned long next_pulse = millis() + bignum;
 unsigned long pot_next_pulse = next_pulse;
 unsigned long cur_time;
 unsigned long end_pulse;
-
-
-
-
-
-
-
-
 
 
 
@@ -73,10 +61,6 @@ void setup() {
  Serial.begin(115200);
  // Set ESP32 as a Wi-Fi Station
  WiFi.mode(WIFI_STA);
-
-
-
-
 
 
 
