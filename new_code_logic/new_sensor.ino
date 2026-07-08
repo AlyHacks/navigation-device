@@ -52,7 +52,7 @@ void setup() {
 
   //sensor.VL53L4CX_Off();
 
-  status = sensor.InitSensor(0x12);
+  status = sensor.InitSensor(0x29);
   if (status != 0) {
     Serial.println("InitSensor failed");
   }
