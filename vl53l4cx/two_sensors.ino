@@ -30,42 +30,12 @@ VL53L4CX sensor;
 //uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x67, 0x03, 0xF8};  // rcvr #2
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Create a structured object
-
-
-
-
-
-
-
-
-
 
 
 
 // Peer info
 esp_now_peer_info_t peerInfo;
-
-
-
-
-
 
 
 
@@ -124,14 +94,6 @@ void setup() {
 
 
 }
-
-
-
-
-
-
-
-
 
 
 
