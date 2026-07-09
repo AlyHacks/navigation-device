@@ -1,4 +1,7 @@
-
+#include <Wire.h>
+#include <SparkFun_VL53L5CX_Library.h>
+#include <WiFi.h>
+#include <esp_now.h>
 
 // Define ESP32-C3 default hardware I2C Pins
 #define I2C_SDA 8
