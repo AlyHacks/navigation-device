@@ -1,3 +1,18 @@
+#include <Arduino.h>
+
+void setup() {
+  Serial.begin(230400);   // use the DEFAULT rate for this test
+  delay(1000);
+  Serial.println("Boot OK");
+}
+
+void loop() {
+  Serial.println("alive");
+  delay(1000);
+}
+
+/*
+
 // Include Libraries
 #include <Arduino.h>
 #include <esp_now.h>
@@ -8,10 +23,10 @@
 #define SDA_PIN D4
 #define SCL_PIN D5
 
-#define DEV_I2c Wire
-#define SerialPort Serial
+#define DEV_I2C Wire
+//#define SerialPort Serial
 
-VL53L4CX sensor(&Wire, -1); //-1 means XSHUT isn't connected
+VL53L4CX sensor(&DEV_I2C, -1); //-1 means XSHUT isn't connected
 
 
 // MAC Address of responder - edit as required 94:A9:90:6A:7A:58.
@@ -37,30 +52,47 @@ void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
 void setup() {
   // Set up Serial Monitor
   Serial.begin(230400);
-
+  Serial.println("Starting...");
   // Set ESP32 as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
-  Wire.begin(SDA_PIN, SCL_PIN);
+  DEV_I2C.begin(SDA_PIN, SCL_PIN);
 
-  int status;
+  //int status;
+  //int status_1;
+  //int status_2;
 
-  status = sensor.begin();
+  int status = sensor.begin();
+  Serial.print("begin(): "); Serial.println(status);
+
   if (status != 0) {
     Serial.println("sensor.begin() failed");
   }
 
-  //sensor.VL53L4CX_Off();
+  sensor.VL53L4CX_Off();
 
-  status = sensor.InitSensor(0x29);
-  if (status != 0) {
+  //0 = success!
+
+  int status_1 = sensor.InitSensor(0x29);
+  Serial.print("InitSensor(): "); Serial.println(status_1);
+  if (status_1 != 0) {
     Serial.println("InitSensor failed");
   }
 
-  status = sensor.VL53L4CX_StartMeasurement();
-  if (status != 0) {
+  /*
+  status_2 = sensor.VL53L4CX_StartMeasurement();
+  Serial.println(status_2);
+  if (status_2 != 0) {
     Serial.println("StartMeasurement failed");
   }
+  else{
+    sensor.VL53L4CX_StartMeasurement();
+  }
+  
+  sensor.VL53L4CX_SetMeasurementTimingBudgetMicroSeconds(100000);
+
+  int status_2 = sensor.VL53L4CX_StartMeasurement();
+  Serial.print("StartMeasurement(): "); Serial.println(status_2);
 
   // Initialize ESP-NOW
   if (esp_now_init() != ESP_OK) {
@@ -70,8 +102,17 @@ void setup() {
 }
 
 void loop() {
+
+
+
+  Serial.println("hi");
+
+  delay(2000);
+
+  //DEV_I2C.requestFrom(SDA_PIN, SCL_PIN);
   uint8_t NewDataReady = 0;
   VL53L4CX_MultiRangingData_t MultiRangingData;
+  VL53L4CX_MultiRangingData_t *pMultiRangingData = &MultiRangingData;
 
   sensor.VL53L4CX_GetMeasurementDataReady(&NewDataReady);
 
@@ -87,3 +128,5 @@ void loop() {
 
   delay(200);
 }
+
+*/
