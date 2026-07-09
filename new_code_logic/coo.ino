@@ -5,8 +5,8 @@
 #include <Wire.h>
 #include <vl53l4cx_class.h>
 
-#define SDA_PIN 3
-#define SCL_PIN 2
+#define SDA_PIN D4
+#define SCL_PIN D5
 
 #define DEV_I2c Wire
 #define SerialPort Serial
@@ -18,7 +18,7 @@ VL53L4CX sensor(&Wire, -1); //-1 means XSHUT isn't connected
 // esp #1:  94:A9:90:67:22:EC
 // esp #2:  94:A9:90:67:03:F8
 
-
+// esp#3 THUS ONE: 94:a9:90:77:7b:c8
 //uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x6A, 0x7A, 0x58};
 //uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x67, 0x22, 0xEC};  // rcvr #1
 //uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x67, 0x03, 0xF8};  // rcvr #2
@@ -29,29 +29,44 @@ esp_now_peer_info_t peerInfo;
 
 // Callback function called when data is sent
 void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
-Serial.print("\r\nLast Packet Send Status:\t");
-Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 
 void setup() {
-// Set up Serial Monitor
- Serial.begin(115200);
- // Set ESP32 as a Wi-Fi Station
- WiFi.mode(WIFI_STA);
- Wire.begin(SDA_PIN, SCL_PIN);
+  // Set up Serial Monitor
+  Serial.begin(115200);
 
- sensor.begin();
- //sensor.VL53L4CX_Off();
- //sensor.InitSensor(0x12)
- sensor.VL53L4CX_StartMeasurement();
+  // Set ESP32 as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
 
-// Initilize ESP-NOW
- if (esp_now_init() != ESP_OK) {
-   Serial.println("Error initializing ESP-NOW");
-   return;
- }
+  Wire.begin(SDA_PIN, SCL_PIN);
 
+  int status;
+
+  status = sensor.begin();
+  if (status != 0) {
+    Serial.println("sensor.begin() failed");
+  }
+
+  //sensor.VL53L4CX_Off();
+
+  status = sensor.InitSensor(0x12);
+  if (status != 0) {
+    Serial.println("InitSensor failed");
+  }
+
+  status = sensor.VL53L4CX_StartMeasurement();
+  if (status != 0) {
+    Serial.println("StartMeasurement failed");
+  }
+
+  // Initialize ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
 }
 
 void loop() {
@@ -63,18 +78,12 @@ void loop() {
   if (NewDataReady) {
     sensor.VL53L4CX_GetMultiRangingData(&MultiRangingData);
 
-    Serial.println(MultiRangingData.RangeData[0].RangeMilliMeter);
+    if (MultiRangingData.NumberOfObjectsFound > 0) {
+      Serial.println(MultiRangingData.RangeData[0].RangeMilliMeter);
+    }
 
     sensor.VL53L4CX_ClearInterruptAndStartMeasurement();
-
-
-    
   }
 
   delay(200);
-
 }
-
-
-
- 
