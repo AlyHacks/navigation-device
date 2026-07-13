@@ -39,21 +39,7 @@ void setup() {
 
   //sensor.vl53l5cx_set_resolution(VL53L5CX_RESOLUTION_4X4);
 
-  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_AUTONOMOUS);
-  if (status) {
-    snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
-    Serial.print(report);
-  }
-
-  /* Using autonomous mode, the integration time can be updated (not possible
-   * using continuous) */
-  status = sensor.vl53l5cx_set_integration_time_ms(20);
-
-  if (status) {
-    snprintf(report, sizeof(report), "vl53l5cx_set_integration_time_ms failed, status %u\r\n", status);
-    Serial.print(report);
-  }
-
+  
 
 
 /*
@@ -84,6 +70,22 @@ void setup() {
 
   sensor.init_sensor();
   Serial.println("Sensor has successfully initialized.");
+
+  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_AUTONOMOUS);
+  if (status) {
+    snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
+    Serial.print(report);
+  }
+
+  /* Using autonomous mode, the integration time can be updated (not possible
+   * using continuous) */
+  status = sensor.vl53l5cx_set_integration_time_ms(20);
+
+  if (status) {
+    snprintf(report, sizeof(report), "vl53l5cx_set_integration_time_ms failed, status %u\r\n", status);
+    Serial.print(report);
+  }
+
 
   if(sensor.vl53l5cx_start_ranging() != 0) {
     Serial.println("Error during ranging");
