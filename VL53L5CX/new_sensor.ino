@@ -9,6 +9,7 @@
 #define DEV_I2C Wire
 #define LPN D6
 #define RST D5
+#define VL53L5CX_RANGING_MODE_AUTONOMOUS  ((uint8_t) 3U)
 //#define VL53L5CX_RESOLUTION_4X4 ((uint8_t)16U)
 
 VL53L5CX sensor(&DEV_I2C, LPN, RST);
@@ -71,7 +72,7 @@ void setup() {
   sensor.init_sensor();
   Serial.println("Sensor has successfully initialized.");
 
-  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_AUTONOMOUS);
+  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_CONTINUOUS);
   if (status) {
     snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
     Serial.print(report);
@@ -90,7 +91,7 @@ void setup() {
   if(sensor.vl53l5cx_start_ranging() != 0) {
     Serial.println("Error during ranging");
   } else {
-
+    sensor.vl53l5cx_start_ranging();
     Serial.println("Ranging started successfully!");
   }
 }
