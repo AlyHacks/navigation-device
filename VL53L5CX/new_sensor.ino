@@ -4,31 +4,59 @@
 #include <esp_now.h>
 
 // Define ESP32-C3 default hardware I2C Pins
-#define I2C_SDA 4
-#define I2C_SCL 5
+#define I2C_SDA D8
+#define I2C_SCL D9
 #define DEV_I2C Wire
+#define LPN D6
+#define RST D5
+//#define VL53L5CX_RESOLUTION_4X4 ((uint8_t)16U)
 
-VL53L5CX sensor(&DEV_I2C, -1, -1);
+VL53L5CX sensor(&DEV_I2C, LPN, RST);
 
 /*
 SparkFun_VL53L5CX myImager;
 VL53L5CX_ResultsData measurementData;
-
-int imageResolution = 0; // Totals zones (16 for 4x4, 64 for 8x8)
-int imageWidth = 0;      // Rows/Columns boundary
 */
+
+
+//int imageResolution = 0; // Totals zones (16 for 4x4, 64 for 8x8)
+//int imageWidth = 0;      // Rows/Columns boundary
+
 void setup() {
+
+  char report[64];
+  uint8_t status;
+
   Serial.begin(115200);
   delay(2000); 
   Serial.println("ESP32-C3 + VL53L5CX ToF Test");
 
   // Force I2C initialization with the specific ESP32-C3 pins
-  DEV_I2C.begin(I2C_SDA, I2C_SCL);
+  DEV_I2C.begin();
   DEV_I2C.setClock(400000); // VL53L5CX supports up to 400kHz standard
 
   Serial.println("Uploading firmware blob to VL53L5CX. Please wait up to 10s...");
 
+  //sensor.vl53l5cx_set_resolution(VL53L5CX_RESOLUTION_4X4);
 
+  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_AUTONOMOUS);
+  if (status) {
+    snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
+    Serial.print(report);
+  }
+
+  /* Using autonomous mode, the integration time can be updated (not possible
+   * using continuous) */
+  status = sensor.vl53l5cx_set_integration_time_ms(20);
+
+  if (status) {
+    snprintf(report, sizeof(report), "vl53l5cx_set_integration_time_ms failed, status %u\r\n", status);
+    Serial.print(report);
+  }
+
+
+
+/*
   if (sensor.begin() == false) {
     Serial.println("Sensor failed to initialize! Check wiring/pullups.");
     while (1);
@@ -40,18 +68,29 @@ void setup() {
 
   }
 
+*/
+
   // 4x4 resolution is recommended for stable ESP32-C3 RAM usage
+  /*
   sensor.setResolution(4 * 4); 
   imageResolution = sensor.getResolution(); 
   imageWidth = sqrt(imageResolution);
+*/
 
+  sensor.begin();
+  Serial.println("Sensor has successfully begun.");
 
 
 
   sensor.init_sensor();
-  sensor.vl53l5cx_start_ranging();
+  Serial.println("Sensor has successfully initialized.");
 
-  Serial.println("Ranging started successfully!");
+  if(sensor.vl53l5cx_start_ranging() != 0) {
+    Serial.println("Error during ranging");
+  } else {
+
+    Serial.println("Ranging started successfully!");
+  }
 }
 
 void loop() {
@@ -68,9 +107,13 @@ void loop() {
   if ((!status) && (NewDataReady != 0)) {
       status = sensor.vl53l5cx_get_ranging_data(&Results);
 
+      Serial.println("Connected");
+
       /* As the sensor is set in 4x4 mode by default, we have a total
        * of 16 zones to print.
        */
+
+      /*
 
       snprintf(report, sizeof(report), "Print data no : %3u\r\n", sensor.get_stream_count());
       SerialPort.print(report);
@@ -83,6 +126,8 @@ void loop() {
       }
       SerialPort.println("");
     }
+
+    */
 
 /*
   if (sensor.isDataReady() == true) {
@@ -103,5 +148,6 @@ void loop() {
     }
   }
   */
+  }
   delay(50); // Small cycle delay to free up CPU
 }
