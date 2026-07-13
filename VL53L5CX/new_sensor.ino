@@ -33,8 +33,9 @@ void setup() {
   Serial.println("ESP32-C3 + VL53L5CX ToF Test");
 
   // Force I2C initialization with the specific ESP32-C3 pins
+  DEV_I2C.setBufferSize(256);
   DEV_I2C.begin();
-  DEV_I2C.setClock(400000); // VL53L5CX supports up to 400kHz standard
+  DEV_I2C.setClock(100000); // VL53L5CX supports up to 400kHz standard
 
   Serial.println("Uploading firmware blob to VL53L5CX. Please wait up to 10s...");
 
@@ -64,15 +65,23 @@ void setup() {
   imageWidth = sqrt(imageResolution);
 */
 
-  sensor.begin();
-  Serial.println("Sensor has successfully begun.");
+  //uint8_t status;
+  status = sensor.begin();
+  Serial.print("begin() status: ");
+  Serial.println(status);
 
+  delay(100);
 
-
-  sensor.init_sensor();
-  Serial.println("Sensor has successfully initialized.");
-
-  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_CONTINUOUS);
+  status = sensor.init_sensor();
+  Serial.print("init_sensor() status: ");
+  Serial.println(status);
+  if (status != 0) {
+    Serial.println("init_sensor failed, halting.");
+    while(1);
+  
+  //DEV_I2C.setClock(400000);
+  }
+  status = sensor.vl53l5cx_set_ranging_mode(VL53L5CX_RANGING_MODE_AUTONOMOUS);
   if (status) {
     snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
     Serial.print(report);
@@ -95,7 +104,6 @@ void setup() {
   if(sensor.vl53l5cx_start_ranging() != 0) {
     Serial.println("Error during ranging");
   } else {
-    sensor.vl53l5cx_start_ranging();
     Serial.println("Ranging started successfully!");
   }
 }
