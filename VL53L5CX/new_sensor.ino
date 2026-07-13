@@ -75,6 +75,10 @@ void setup() {
   if (status) {
     snprintf(report, sizeof(report), "vl53l5cx_set_ranging_mode failed, status %u\r\n", status);
     Serial.print(report);
+  } else{
+    
+    Serial.println("Ranging mode set to autonomous successfully!");
+
   }
 
   /* Using autonomous mode, the integration time can be updated (not possible
