@@ -34,14 +34,6 @@ void setup()
   }
 
 
-  if (sensor.init_sensor() == false)
-  {
-    Serial.println(F("Sensor initialization failed. Freezing"));
-    while (1) ;
-  } else{
-  Serial.println("Sensor has successfully initialized.");
-  }
-
   sensor.setResolution(8*8); //Enable all 64 pads
   
   imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
@@ -77,6 +69,7 @@ void loop()
           Serial.print(" Distance results:");
           Serial.print(results.distance_mm[x + y]);
         }
+        if 
         Serial.println();
       }
       Serial.println();
