@@ -3,6 +3,9 @@
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h> //http://librarymanager/All#SparkFun_VL53L5CX
 
+#define I2C_SDA D4
+#define I2C_SCL D5
+
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData results; // Result data class structure, 1356 byes of RAM
 
@@ -15,32 +18,26 @@ void setup()
   delay(1000);
   Serial.println("SparkFun VL53L5CX Imager Example");
 
-  Wire.begin(); //This resets to 100kHz I2C
+  //Wire.begin(6,7); //This resets to 100kHz I2C
+  Wire.begin();
   Wire.setClock(400000); //Sensor has max I2C freq of 400kHz 
+
+  Serial.println(sensor.getAddress());
   
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false)
   {
     Serial.println(F("Sensor not found - check your wiring. Freezing"));
     while (1) ;
-  } else{
-    Serial.println("Sensor has successfully begun.");
-  }
-
-
-  if (sensor.init_sensor() == false)
-  {
-    Serial.println(F("Sensor initialization failed. Freezing"));
-    while (1) ;
-  } else{
-  Serial.println("Sensor has successfully initialized.");
-  }
+  } //else{
+    //Serial.println("Sensor has successfully begun.");
+  //}
 
   sensor.setResolution(8*8); //Enable all 64 pads
   
   imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
-  imageWidth = sqrt(imageResolution); //Calculate printing width
-  
+  imageWidth = int(sqrt(imageResolution)); //Calculate printing width
+  /*
   if (sensor.startRanging() == false){
     Serial.println(F("Failed to start ranging. Freezing"));
     while (1) ;
@@ -48,6 +45,10 @@ void setup()
     
     Serial.println("Ranging has successfully started.");
   }
+  */
+
+  sensor.startRanging();
+  Serial.println("hi");
 
 }
 
@@ -64,7 +65,7 @@ void loop()
       {
         for (int x = imageWidth - 1 ; x >= 0 ; x--)
         {
-          Serial.print("Distance results:");
+          Serial.print(" Distance results:");
           Serial.print(results.distance_mm[x + y]);
         }
         Serial.println();
