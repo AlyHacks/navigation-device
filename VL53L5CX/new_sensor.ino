@@ -1,3 +1,6 @@
+// claire learns how to use github
+// hopefully claire didn't break anything
+
 #include <Wire.h>
 #include <vl53l5cx_class.h>
 #include <WiFi.h>
