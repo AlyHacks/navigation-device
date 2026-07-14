@@ -45,7 +45,8 @@ void setup()
     Serial.println(F("Failed to start ranging. Freezing"));
     while (1) ;
   } else{
-    Serial.println("Ranging started successfully!");
+    
+    Serial.println("Ranging has successfully started.");
   }
 
 }
