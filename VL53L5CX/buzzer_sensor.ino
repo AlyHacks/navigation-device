@@ -112,6 +112,7 @@ void loop()
     } else if (average_dist > 500){
             digitalWrite(buzzerPin, LOW); // Turn the buzzer off
         }
+    average_dist = 0;
 
   delay(5); //Small delay between polling
 }
