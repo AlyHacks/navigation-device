@@ -68,8 +68,7 @@ void loop()
         {
           Serial.print(" Distance results:");
           Serial.print(results.distance_mm[x + y]);
-        }
-        if 
+        } 
         Serial.println();
       }
       Serial.println();
