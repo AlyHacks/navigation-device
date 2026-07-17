@@ -5,6 +5,7 @@
 #include <Wire.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include <list>
 
 
 #define I2C_SDA D4
@@ -65,7 +66,7 @@ void setup()
 
 void loop()
 {
-    list distance;
+    std::list<int> distance;
     int average_dist = 0;
  
 
