@@ -67,7 +67,7 @@ void loop()
 {
     average_dist = 0;
     distance = results.distance_mm[x+y]; 
-    for (int i=0; i<=len(distance; i++){
+    for (int i=0; i<=len(distance); i++){
         average_dist = i+average_dist;
     }
 
