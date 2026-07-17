@@ -94,7 +94,7 @@ void loop()
             average_dist = i+average_dist;
         }
         Serial.print("Average distance:");
-        Serial.print(average_dist)
+        Serial.print(average_dist);
         Serial.println();
     }
     }
