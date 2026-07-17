@@ -66,7 +66,6 @@ void setup()
 
 void loop()
 {
-    std::list<int> distance;
     int average_dist = 0;
  
 
@@ -83,16 +82,11 @@ void loop()
         {
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
-            distance.push_back(results.distance_mm[x+y]); 
-            for (int i=0; i<=length; i++){
-                average_dist = distance[i]+average_dist;
-            }
+            average_dist += results.distance_mm[x + y];
             average_dist = average_dist/64;
         }
         Serial.println();
-        }
-        size_t length = distance.size();
-              
+        }              
         
         Serial.print("Average distance:");
         Serial.print(average_dist);
