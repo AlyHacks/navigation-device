@@ -83,7 +83,7 @@ void loop()
         {
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
-            distance.insert(results.distance_mm[x+y]); 
+            distance.push_back(results.distance_mm[x+y]); 
             size_t length = distance.size();
                
                 for (int i=0; i<=length; i++){
