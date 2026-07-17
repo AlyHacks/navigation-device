@@ -84,35 +84,34 @@ void loop()
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
             distance.push_back(results.distance_mm[x+y]); 
-            size_t length = distance.size();
+            ;
+        }
+        Serial.println();
+        }
+        size_t length = distance.size();
                
-                for (int i=0; i<=length; i++){
-                    average_dist = i+average_dist;
-                }
-            Serial.print("Average distance:");
-            Serial.print(average_dist);
+        for (int i=0; i<=length; i++){
+            average_dist = i+average_dist;
         }
-        if (average_dist < 100){
+        Serial.print("Average distance:");
+        Serial.print(average_dist)
+        Serial.println();
+    }
+    }
+
+    if (average_dist < 100){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(100);                // Wait for 1 second
-        }
-        else if (average_dist < 500){
+    }else if (average_dist < 500){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(250);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(250);                // Wait for 1 second
-        } else if (average_dist > 500)
-        {
+    } else if (average_dist > 500){
             digitalWrite(buzzerPin, LOW); // Turn the buzzer off
         }
-        
-        Serial.println();
-        }
-        Serial.println();
-    }
-    }
 
   delay(5); //Small delay between polling
 }
