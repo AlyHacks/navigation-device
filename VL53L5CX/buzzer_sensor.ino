@@ -65,11 +65,9 @@ void setup()
 
 void loop()
 {
+    list distance;
     int average_dist = 0;
-    distance = results.distance_mm[x+y]; 
-    for (int i=0; i<=len(distance); i++){
-        average_dist = i+average_dist;
-    }
+ 
 
     //Poll sensor for new data
     if (sensor.isDataReady() == true)
@@ -84,6 +82,11 @@ void loop()
         {
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
+            distance.append(results.distance_mm[x+y]); 
+               
+                for (int i=0; i<=len(distance); i++){
+                    average_dist = i+average_dist;
+                }
             Serial.print("Average distance:");
             Serial.print(average_dist);
         }
