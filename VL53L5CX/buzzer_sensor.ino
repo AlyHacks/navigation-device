@@ -83,11 +83,10 @@ void loop()
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
             average_dist += results.distance_mm[x + y];
-            average_dist = average_dist/64;
         }
         Serial.println();
         }              
-        
+        average_dist = average_dist/64;
         Serial.print("Average distance:");
         Serial.print(average_dist);
         Serial.println();
