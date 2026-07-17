@@ -87,6 +87,7 @@ void loop()
             for (int i=0; i<=length; i++){
                 average_dist = distance[i]+average_dist;
             }
+            average_dist = average_dist/64;
         }
         Serial.println();
         }
