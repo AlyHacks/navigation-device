@@ -84,6 +84,8 @@ void loop()
         {
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
+            Serial.print("Average distance:");
+            Serial.print(average_dist);
         }
         if (average_dist < 100){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
