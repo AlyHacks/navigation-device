@@ -93,7 +93,7 @@ void loop()
     }
     }
 
-    if (average_dist < 100){
+    if (average_dist < 200){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
@@ -103,8 +103,10 @@ void loop()
             delay(250);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(250);                // Wait for 1 second
-    } else if (average_dist > 500){
-            digitalWrite(buzzerPin, LOW); // Turn the buzzer off
+    } else {
+            digitalWrite(buzzerPin, LOW);
+            delay(2000); // Turn the buzzer off
+            Serial.println("distance is > 500");
         }
     average_dist = 0;
 
