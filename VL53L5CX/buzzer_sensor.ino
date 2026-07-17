@@ -83,7 +83,7 @@ void loop()
         {
             Serial.print(" Distance results:");
             Serial.print(results.distance_mm[x + y]);
-            distance.append(results.distance_mm[x+y]); 
+            distance.insert(results.distance_mm[x+y]); 
                
                 for (int i=0; i<=len(distance); i++){
                     average_dist = i+average_dist;
