@@ -5,8 +5,9 @@
 #include <Wire.h>
 #include <esp_now.h>
 #include <WiFi.h>
+#include <iostream>
 #include <list>
-#include <unordered_set>
+#include <algorithm>
 
 
 #define I2C_SDA D4
@@ -78,7 +79,7 @@ void setup()
 
 void loop()
 {
-    int average_dist = 0;
+    std::list<int> minimums = {};
  
 
     //Poll sensor for new data
@@ -88,21 +89,47 @@ void loop()
     {
         //The ST library returns the data transposed from zone mapping shown in datasheet
         //Pretty-print data with increasing y, decreasing x to reflect reality
+
         for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
-          for (int x = imageWidth - 1 ; x >= 0 ; x--)
-          {
-              Serial.print(" Distance results:");
-              int distance = results.distance_mm[x + y];
-              Serial.print(distance);
-              average_dist += distance;
+          for (int x = imageWidth - 1 ; x >= 0 ; x--) {
+            int distance = results.distance_mm[x+y];
+            std::string dist = std::to_string(std::abs(distance));
+              if(dist.length() == 3) {
+                Serial.print(0);
+                Serial.print(distance);
+              } else if(dist.length() == 2) {
+                Serial.print(00);
+                Serial.print(distance);
+              } else if(dist.length() == 1) {
+                Serial.print(000);
+                Serial.print(distance);
+              } else {
+                Serial.print(distance);
+              }
+
+              minimums.push_back(distance);
           }
+
+
+              
+
+          }
+          if (!minimums.empty()) {
+            // Find the iterator to the minimum element
+            auto min = std::min_element(minimums.begin(), minimums.end());
+
+            Serial.print("Minimum Value: ");
+            Serial.print(min);
+
           Serial.println();
         }              
-
+/*
         average_dist = average_dist/64;
         Serial.print("Average distance:");
         Serial.print(average_dist);
         Serial.println();
+*/
+
 /*
         average_dist_l = average_dist_l/32;
         Serial.print("Average distance of left:");
@@ -116,18 +143,18 @@ void loop()
 
 
 
-    if (average_dist <= 1000){
+    if (min <= 1000){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
-            delay(average_dist);                // Wait for 1 second
+            delay(min);                // Wait for 1 second
                // Wait for 1 second
     } else {
             digitalWrite(buzzerPin, LOW);
             delay(2000); // Turn the buzzer off
             Serial.println("distance is > 500");
         }
-    average_dist = 0;
+    //average_dist = 0;
 
   delay(5); //Small delay between polling
 }
