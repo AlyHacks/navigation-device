@@ -24,35 +24,60 @@ int average_dist_r;
 */
 
 
-void setup()
-{
-    pinMode(buzzerPin, OUTPUT);
-    Serial.begin(115200);
-    delay(1000);
-    Serial.println("SparkFun VL53L5CX Imager Example");
+
+
+
+void setup() {
+  pinMode(buzzerPin, OUTPUT);
+  // Set up Serial Monitor
+  Serial.begin(115200);
+  // Set ESP32 as a Wi-Fi Station
+  WiFi.mode(WIFI_STA);
+  delay(1000);
+  Serial.println("SparkFun VL53L5CX Imager Example");
 
   //Wire.begin(6,7); //This resets to 100kHz I2C
-    Wire.begin();
-    Wire.setClock(400000); //Sensor has max I2C freq of 400kHz 
+  Wire.begin();
+  Wire.setClock(400000); //Sensor has max I2C freq of 400kHz 
 
-    
+
+  // Initilize ESP-NOW
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+  // Register callback function
+  esp_now_register_recv_cb(OnDataRecv);
+
+
+  // single buzz on startup
+  digitalWrite(ledPin, HIGH);
+  delay(ontime);
+  digitalWrite(ledPin,LOW);
+
+
+  void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
+  memcpy(&received_distance, incomingData, sizeof(received_distance));
+  Serial.print("Data received: ");
+  Serial.println(len);
+  Serial.print("Distance:");
+  Serial.println(received_distance);
+  Serial.println();
 }
 
-
-  
-
+}
 
 
 void loop()
 {
 
 
-    if (average_dist < 200){
+    if (received_distance < 200){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(100);                // Wait for 1 second
-    }else if (average_dist < 500){
+    }else if (received_distance < 500){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(250);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
@@ -62,7 +87,7 @@ void loop()
             delay(2000); // Turn the buzzer off
             Serial.println("distance is > 500");
         }
-    average_dist = 0;
+    received_distance = 0;
 
   delay(5); //Small delay between polling
 }
