@@ -45,36 +45,7 @@ void setup()
 
 void loop()
 {
-    int average_dist = 0;
- 
 
-    //Poll sensor for new data
-    if (sensor.isDataReady() == true)
-    {
-    if (sensor.getRangingData(&results)) //Read distance data into array
-    {
-        //The ST library returns the data transposed from zone mapping shown in datasheet
-        //Pretty-print data with increasing y, decreasing x to reflect reality
-        for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
-          for (int x = imageWidth - 1 ; x >= 0 ; x--)
-          {
-              Serial.print(" Distance results:");
-              Serial.print(results.distance_mm[x + y]);
-              average_dist += results.distance_mm[x + y];
-
-              if(left(x+y) != left.end()) { //if x+y ("index" value in sensor readings) is part of the left quadrants, add to quadrant's distance counter
-                average_dist_l += results.distance_mm[x+y];
-              }
-              else if(right(x+y) != right.end()) {
-                average_dist_r += results.distance_mm[x+y];
-              }
-          }
-          Serial.println();
-        }              
-
-        
-    }
-    }
 
     if (average_dist < 200){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
