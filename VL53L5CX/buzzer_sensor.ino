@@ -25,12 +25,12 @@ int imageWidth = 0; //Used to pretty print output
 
 //later, find a simpler way to calculate averages of quadrants
 //also double check these numbers are even correct
-std::unordered_set<int> left = {1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 20, 25, 26, 27, 28, 33, 34, 35, 36, 41, 42, 43, 44, 49, 50, 51, 52, 57, 58, 59, 60}; 
-std::unordered_set<int> right = {5, 6, 7, 8, 13, 14, 15, 16, 21, 22, 23, 24, 29, 30, 31, 32, 37, 38, 39, 40, 45, 46, 47, 48, 53, 54, 55, 56, 61, 62, 63, 64};
+//std::unordered_set<int> left = {1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 20, 25, 26, 27, 28, 33, 34, 35, 36, 41, 42, 43, 44, 49, 50, 51, 52, 57, 58, 59, 60}; 
+//std::unordered_set<int> right = {5, 6, 7, 8, 13, 14, 15, 16, 21, 22, 23, 24, 29, 30, 31, 32, 37, 38, 39, 40, 45, 46, 47, 48, 53, 54, 55, 56, 61, 62, 63, 64};
 
 //initiating variables to use later for measuring average distance of the 4 quadrants
-int average_dist_l;
-int average_dist_r;
+//int average_dist_l;
+//int average_dist_r;
 
 
 
@@ -92,15 +92,9 @@ void loop()
           for (int x = imageWidth - 1 ; x >= 0 ; x--)
           {
               Serial.print(" Distance results:");
-              Serial.print(results.distance_mm[x + y]);
-              average_dist += results.distance_mm[x + y];
-
-              if(left(x+y) != left.end()) { //if x+y ("index" value in sensor readings) is part of the left quadrants, add to quadrant's distance counter
-                average_dist_l += results.distance_mm[x+y];
-              }
-              else if(right(x+y) != right.end()) {
-                average_dist_r += results.distance_mm[x+y];
-              }
+              int distance = results.distance_mm[x + y];
+              Serial.print(distance);
+              average_dist += distance;
           }
           Serial.println();
         }              
@@ -109,27 +103,25 @@ void loop()
         Serial.print("Average distance:");
         Serial.print(average_dist);
         Serial.println();
-
+/*
         average_dist_l = average_dist_l/32;
         Serial.print("Average distance of left:");
         Serial.print(average_dist_l);
         
         average_dist_r = average_dist_r/32;
         Serial.print("Average distance of right:");
-        Serial.print(average_dist_r);
+        Serial.print(average_dist_r); */
     }
     }
 
-    if (average_dist < 200){
+
+
+    if (average_dist <= 1000){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
-            delay(100);                // Wait for 1 second
-    }else if (average_dist < 500){
-            digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
-            delay(250);                // Wait for 1 second
-            digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
-            delay(250);                // Wait for 1 second
+            delay(average_dist);                // Wait for 1 second
+               // Wait for 1 second
     } else {
             digitalWrite(buzzerPin, LOW);
             delay(2000); // Turn the buzzer off
