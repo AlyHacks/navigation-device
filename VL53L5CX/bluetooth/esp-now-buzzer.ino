@@ -12,13 +12,6 @@
 
 const int buzzerPin = D7; // GPIO pin connected to the buzzer
 
-
-
-SparkFun_VL53L5CX sensor;
-VL53L5CX_ResultsData results; // Result data class structure, 1356 byes of RAM
-
-int imageResolution = 0; //Used to pretty print output
-int imageWidth = 0; //Used to pretty print output
 /*
 //later, find a simpler way to calculate averages of quadrants
 //also double check these numbers are even correct
@@ -79,18 +72,7 @@ void loop()
           Serial.println();
         }              
 
-        average_dist = average_dist/64;
-        Serial.print("Average distance:");
-        Serial.print(average_dist);
-        Serial.println();
-
-        average_dist_l = average_dist_l/32;
-        Serial.print("Average distance of left:");
-        Serial.print(average_dist_l);
         
-        average_dist_r = average_dist_r/32;
-        Serial.print("Average distance of right:");
-        Serial.print(average_dist_r);
     }
     }
 
