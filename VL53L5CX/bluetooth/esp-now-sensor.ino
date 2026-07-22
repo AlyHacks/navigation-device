@@ -55,26 +55,27 @@ void setup()
     return;
     }
 
+  sensor.setResolution(8*8); //Enable all 64 pads
+    
+  imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
+  imageWidth = int(sqrt(imageResolution)); //Calculate printing width
+    /*
+    if (sensor.startRanging() == false){
+      Serial.println(F("Failed to start ranging. Freezing"));
+      while (1) ;
+    } else{
+      
+      Serial.println("Ranging has successfully started.");
+    }
+    */
+
+  sensor.startRanging();
+  Serial.println("hi");
 
 
 }
 
-sensor.setResolution(8*8); //Enable all 64 pads
-  
-imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
-imageWidth = int(sqrt(imageResolution)); //Calculate printing width
-  /*
-  if (sensor.startRanging() == false){
-    Serial.println(F("Failed to start ranging. Freezing"));
-    while (1) ;
-  } else{
-    
-    Serial.println("Ranging has successfully started.");
-  }
-  */
 
-sensor.startRanging();
-Serial.println("hi");
 
 void loop() {
 
