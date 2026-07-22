@@ -79,35 +79,38 @@ void setup()
 
 void loop() {
 
-    if (sensor.isDataReady() == true)
-    {
-    if (sensor.getRangingData(&results)) //Read distance data into array
-    {
+  int distance;
+
+  
+
+  if (sensor.isDataReady() == true) {
+    if (sensor.getRangingData(&results)) { //Read distance data into array 
         //The ST library returns the data transposed from zone mapping shown in datasheet
         //Pretty-print data with increasing y, decreasing x to reflect reality
         for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
           for (int x = imageWidth - 1 ; x >= 0 ; x--)
           {
               Serial.print(" Distance results:");
-              int distance = results.distance_mm[x + y];
+              distance = results.distance_mm[x + y];
 
           }
           Serial.println();
         }      
-        Serial.print(distance);
+        //Serial.print(distance);
 
-     
+      
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &distance, sizeof(distance));
-    
+
     //sending the data to the buzzer esp32
-    if (sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-    Serial.println();
-    if (result == ESP_OK) {
-    Serial.println("Sending confirmed");
+    //if(sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
+      //Serial.println();
+    if(result == ESP_OK) {
+      Serial.println("Sending confirmed");
     }
     else {
-    Serial.println("Sending error");
+      Serial.println("Sending error");
     }
+    
 
 
  delay(200);
