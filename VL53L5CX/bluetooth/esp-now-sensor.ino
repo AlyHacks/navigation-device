@@ -33,7 +33,7 @@ void setup() {
   Serial.println(sensor.getAddress());
 
   Wire.begin();
-  Wire.setClocl(400000);
+  Wire.setClock(400000);
 
 
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
