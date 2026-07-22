@@ -13,7 +13,7 @@ VL53L5CX_ResultsData results; // Result data class structure, 1356 byes of RAM
 int imageResolution = 0; //Used to pretty print output
 int imageWidth = 0; //Used to pretty print output
 
-uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x67, 0x22, 0xEC};  // rcvr address so esp of the buzzer
+uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x69, 0xD2, 0xDC};  // rcvr address so esp of the buzzer
 
 // Peer info
 esp_now_peer_info_t peerInfo;
