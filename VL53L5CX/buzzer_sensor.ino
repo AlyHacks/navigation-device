@@ -8,6 +8,7 @@
 #include <iostream>
 #include <list>
 #include <algorithm>
+#include <vector>
 
 
 #define I2C_SDA D4
@@ -79,7 +80,7 @@ void setup()
 
 void loop()
 {
-    std::list<int> minimums = {};
+    std::vector<int> minimums = {};
  
 
     //Poll sensor for new data
@@ -95,34 +96,45 @@ void loop()
             int distance = results.distance_mm[x+y];
             std::string dist = std::to_string(std::abs(distance));
               if(dist.length() == 3) {
-                Serial.print(0);
+                Serial.print("0");
                 Serial.print(distance);
+                Serial.print(" ");
               } else if(dist.length() == 2) {
-                Serial.print(00);
+                Serial.print("00");
                 Serial.print(distance);
+                Serial.print(" ");
               } else if(dist.length() == 1) {
-                Serial.print(000);
+                Serial.print("000");
                 Serial.print(distance);
+                Serial.print(" ");
               } else {
                 Serial.print(distance);
+                Serial.print(" ");
               }
 
               minimums.push_back(distance);
           }
 
 
-              
+          int min;
 
           }
           if (!minimums.empty()) {
             // Find the iterator to the minimum element
             auto min = std::min_element(minimums.begin(), minimums.end());
 
-            Serial.print("Minimum Value: ");
-            Serial.print(min);
+            
+
+            //Serial.print("Minimum Value: ");
+            //min = *min2;
+            std::cout << "Minimum value: " << *min << std::endl;
 
           Serial.println();
-        }              
+        } else {
+          Serial.print("minimums is empty");
+        }  
+
+                    
 /*
         average_dist = average_dist/64;
         Serial.print("Average distance:");
@@ -141,7 +153,7 @@ void loop()
     }
     }
 
-
+/*
 
     if (min <= 1000){
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
@@ -154,6 +166,10 @@ void loop()
             delay(2000); // Turn the buzzer off
             Serial.println("distance is > 500");
         }
+*/
+        
+
+        
     //average_dist = 0;
 
   delay(5); //Small delay between polling
