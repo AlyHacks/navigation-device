@@ -46,6 +46,14 @@ void setup() {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
+
+  void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
+  memcpy(&received_distance, incomingData, sizeof(received_distance));
+  Serial.print("Data received: ");
+  Serial.println(len);
+  Serial.print("Distance:");
+  Serial.println(received_distance);
+  Serial.println();
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
 
@@ -56,13 +64,7 @@ void setup() {
   digitalWrite(ledPin,LOW);
 
 
-  void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
-    memcpy(&received_distance, incomingData, sizeof(received_distance));
-    Serial.print("Data received: ");
-    Serial.println(len);
-    Serial.print("Distance:");
-    Serial.println(received_distance);
-    Serial.println();
+
 }
 
 }
