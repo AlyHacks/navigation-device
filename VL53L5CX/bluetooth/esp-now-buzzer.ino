@@ -57,12 +57,12 @@ void setup() {
 
 
   void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
-  memcpy(&received_distance, incomingData, sizeof(received_distance));
-  Serial.print("Data received: ");
-  Serial.println(len);
-  Serial.print("Distance:");
-  Serial.println(received_distance);
-  Serial.println();
+    memcpy(&received_distance, incomingData, sizeof(received_distance));
+    Serial.print("Data received: ");
+    Serial.println(len);
+    Serial.print("Distance:");
+    Serial.println(received_distance);
+    Serial.println();
 }
 
 }
