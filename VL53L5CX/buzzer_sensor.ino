@@ -2,9 +2,6 @@
 #include <esp_now.h>
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h> //http://librarymanager/All#SparkFun_VL53L5CX
-#include <Wire.h>
-#include <esp_now.h>
-#include <WiFi.h>
 #include <iostream>
 #include <list>
 #include <algorithm>

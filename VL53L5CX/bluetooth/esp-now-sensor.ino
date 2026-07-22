@@ -2,6 +2,7 @@
 #include <esp_now.h>
 #include <Wire.h>
 #include <SparkFun_VL53L5CX_Library.h> //http://librarymanager/All#SparkFun_VL53L5CX
+#include <iostream>
 #include <list>
 #include <unordered_set>
 #define I2C_SDA D4
@@ -29,8 +30,11 @@ void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
 void setup() {
   Serial.begin(115200);
   Serial.print("hi");
-
   Serial.println(sensor.getAddress());
+
+  Wire.begin();
+  Wire.setClocl(400000);
+
 
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false) {
@@ -38,6 +42,24 @@ void setup() {
     while (1);
   } else {
   Serial.println("Sensor has successfully begun.");   
+  }
+
+  sensor.setResolution(8*8); //Enable all 64 pads
+    
+  imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
+  imageWidth = int(sqrt(imageResolution)); //Calculate printing width
+   
+
+  esp_now_register_send_cb(OnDataSent);
+// Register peer
+  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+  // Add peer     
+  
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println("Failed to add peer");
+    return;
   }
 
   if (esp_now_init() != ESP_OK) {
@@ -48,21 +70,8 @@ void setup() {
   }
     
 
-  esp_now_register_send_cb(OnDataSent);
-// Register peer
-  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-  peerInfo.channel = 0;
-  peerInfo.encrypt = false;
-  // Add peer     
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
 
-  sensor.setResolution(8*8); //Enable all 64 pads
-    
-  imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
-  imageWidth = int(sqrt(imageResolution)); //Calculate printing width
+   
     /*
     if (sensor.startRanging() == false){
       Serial.println(F("Failed to start ranging. Freezing"));
