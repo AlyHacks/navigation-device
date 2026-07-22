@@ -21,39 +21,43 @@ esp_now_peer_info_t peerInfo;
 
 // Callback function called when data is sent
 void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
-Serial.print("\r\nLast Packet Send Status:\t");
-Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 
-void setup() 
-{
-    Serial.println(sensor.getAddress());
+void setup() {
+  Serial.begin(115200);
+  Serial.print("hi");
 
-    Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
-    if (sensor.begin() == false)
-    {
+  Serial.println(sensor.getAddress());
+
+  Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
+  if (sensor.begin() == false) {
     Serial.println(F("Sensor not found - check your wiring. Freezing"));
-    while (1) ;
-    } else{
-    Serial.println("Sensor has successfully begun.");   
-    }
+    while (1);
+  } else {
+  Serial.println("Sensor has successfully begun.");   
+  }
 
-    if (esp_now_init() != ESP_OK) {
-   Serial.println("Error initializing ESP-NOW");
-   return;
-    }
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  } else {
+    Serial.print("Success!");
+  }
+    
 
-    esp_now_register_send_cb(OnDataSent);
- // Register peer
-    memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-    peerInfo.channel = 0;
-    peerInfo.encrypt = false;
-    // Add peer     
-    if (esp_now_add_peer(&peerInfo) != ESP_OK){
+  esp_now_register_send_cb(OnDataSent);
+// Register peer
+  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+  // Add peer     
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
     Serial.println("Failed to add peer");
     return;
-    }
+  }
 
   sensor.setResolution(8*8); //Enable all 64 pads
     
@@ -104,13 +108,7 @@ void loop() {
     //sending the data to the buzzer esp32
     //if(sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
       //Serial.println();
-    if(result == ESP_OK) {
-      Serial.println("Sending confirmed");
-    }
-    else {
-      Serial.println("Sending error");
-    }
-    
+
 
 
  delay(200);

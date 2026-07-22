@@ -10,8 +10,6 @@
 #define I2C_SCL D5
 
 
-const int buzzerPin = D7; // GPIO pin connected to the buzzer
-
 /*
 //later, find a simpler way to calculate averages of quadrants
 //also double check these numbers are even correct
@@ -23,8 +21,18 @@ int average_dist_l;
 int average_dist_r;
 */
 
+int ontime = 200;
+const int buzzerPin = D7; // GPIO pin connected to the buzzer
+int received_distance = 1;
 
-
+void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
+    memcpy(&received_distance, incomingData, sizeof(received_distance));
+    Serial.print("Data received: ");
+    Serial.println(len);
+    Serial.print("Distance:");
+    Serial.println(received_distance);
+    Serial.println();
+  }
 
 
 void setup() {
@@ -46,42 +54,34 @@ void setup() {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
-
-  void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
-  memcpy(&received_distance, incomingData, sizeof(received_distance));
-  Serial.print("Data received: ");
-  Serial.println(len);
-  Serial.print("Distance:");
-  Serial.println(received_distance);
-  Serial.println();
+  
+  
   // Register callback function
   esp_now_register_recv_cb(OnDataRecv);
 
 
   // single buzz on startup
-  digitalWrite(ledPin, HIGH);
+  digitalWrite(buzzerPin, HIGH);
   delay(ontime);
-  digitalWrite(ledPin,LOW);
-
+  digitalWrite(buzzerPin, LOW);
 
 
 }
 
-}
 
+void loop() {
 
-void loop()
-{
+  Serial.print(received_distance);
 
-
-    if (received_distance < 200){
+/*
+    if (received_distance < 200) {
             Serial.println("distance is < 200");
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(100);                // Wait for 1 second
     }else if (received_distance < 500){
-            Serial.println("distance is < 500")
+            Serial.println("distance is < 500");
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(250);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
@@ -92,6 +92,8 @@ void loop()
             Serial.println("distance is > 500");
         }
     received_distance = 0;
+
+    */
 
   delay(5); //Small delay between polling
 }
