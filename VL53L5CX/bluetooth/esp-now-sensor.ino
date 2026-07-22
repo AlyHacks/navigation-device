@@ -55,6 +55,7 @@ void setup()
     return;
     }
 
+
   sensor.setResolution(8*8); //Enable all 64 pads
     
   imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
@@ -107,6 +108,10 @@ void loop() {
     }
     else {
     Serial.println("Sending error");
+
+
+
+
     }
 
 

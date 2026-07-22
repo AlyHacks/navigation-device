@@ -73,11 +73,13 @@ void loop()
 
 
     if (received_distance < 200){
+            Serial.println("distance is < 200");
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(100);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
             delay(100);                // Wait for 1 second
     }else if (received_distance < 500){
+            Serial.println("distance is < 500")
             digitalWrite(buzzerPin, HIGH); // Turn the buzzer on
             delay(250);                // Wait for 1 second
             digitalWrite(buzzerPin, LOW);  // Turn the buzzer off
