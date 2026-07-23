@@ -35,7 +35,6 @@ void setup() {
   Wire.begin();
   Wire.setClock(400000);
 
-
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false) {
     Serial.println(F("Sensor not found - check your wiring. Freezing"));
