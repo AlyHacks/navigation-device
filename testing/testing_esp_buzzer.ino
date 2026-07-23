@@ -16,7 +16,7 @@ typedef struct struct_message {
 struct_message myData;
 
 // callback function that will be executed when data is received
-void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
   Serial.print("Bytes received: ");
   Serial.println(len);
@@ -53,7 +53,7 @@ void setup() {
   
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
-  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
+  esp_now_register_recv_cb(OnDataRecv);
 }
  
 void loop() {
