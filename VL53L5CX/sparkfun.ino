@@ -53,8 +53,7 @@ void setup()
 
 }
 
-void loop()
-{
+void loop() {
   //Poll sensor for new data
   if (sensor.isDataReady() == true)
   {
