@@ -14,62 +14,71 @@ VL53L5CX_ResultsData results; // Result data class structure, 1356 byes of RAM
 int imageResolution = 0; //Used to pretty print output
 int imageWidth = 0; //Used to pretty print output
 
-uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x69, 0xD2, 0xDC};  // rcvr address so esp of the buzzer
+uint8_t broadcastAddress[] = {0xAC, 0x27, 0x6E, 0x73, 0xA3, 0xA8};  // rcvr address so esp of the buzzer
 
 // Peer info
 esp_now_peer_info_t peerInfo;
 
+String success;
+
 
 // Callback function called when data is sent
-void OnDataSent(const wifi_tx_info_t *mac_addr, esp_now_send_status_t status) {
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+  if(status == 0) {
+    success = "Delivery Success";
+  } else {
+    success = "Delivery Fail";
+  }
 }
 
 
 void setup() {
   Serial.begin(115200);
-  Serial.print("hi");
-  Serial.println(sensor.getAddress());
-
+  delay(1000);
+  Wifi.mode(WIFI_STA);
   Wire.begin();
   Wire.setClock(400000);
 
+<<<<<<< HEAD
+=======
+  if (esp_now_init() != ESP_OK) {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  esp_now_register_send_cb(esp_now_send_cb_t(OnDataSent));
+
+  // Register peer
+  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+
+  // Add peer
+  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
+    Serial.println("Failed to add peer");
+    return;
+  }
+
+  // Serial.print("hi");
+  Serial.println(sensor.getAddress());
+
+
+
+>>>>>>> d482271d5dede709fb00f507aef2c932ddb642e7
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false) {
     Serial.println(F("Sensor not found - check your wiring. Freezing"));
     while (1);
   } else {
-  Serial.println("Sensor has successfully begun.");   
+    Serial.println("Sensor has successfully begun.");   
   }
 
   sensor.setResolution(8*8); //Enable all 64 pads
     
   imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
   imageWidth = int(sqrt(imageResolution)); //Calculate printing width
-   
-
-  esp_now_register_send_cb(OnDataSent);
-// Register peer
-  memcpy(peerInfo.peer_addr, broadcastAddress, 6);
-  peerInfo.channel = 0;
-  peerInfo.encrypt = false;
-  // Add peer     
-  
-  if (esp_now_add_peer(&peerInfo) != ESP_OK) {
-    Serial.println("Failed to add peer");
-    return;
-  }
-
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
-    return;
-  } else {
-    Serial.print("Success!");
-  }
-    
-
-
    
     /*
     if (sensor.startRanging() == false){
@@ -82,12 +91,9 @@ void setup() {
     */
 
   sensor.startRanging();
-  Serial.println("hi");
-
+  Serial.println("ranging started");
 
 }
-
-
 
 void loop() {
 
@@ -100,26 +106,23 @@ void loop() {
         //The ST library returns the data transposed from zone mapping shown in datasheet
         //Pretty-print data with increasing y, decreasing x to reflect reality
         for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
-          for (int x = imageWidth - 1 ; x >= 0 ; x--)
-          {
-              Serial.print(" Distance results:");
-              distance = results.distance_mm[x + y];
-
+          for (int x = imageWidth - 1 ; x >= 0 ; x--) {
+            Serial.print(" Distance results:");
+            distance = results.distance_mm[x + y];
           }
+          
           Serial.println();
         }      
-        //Serial.print(distance);
+    } 
+  }
 
-      
-    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &distance, sizeof(distance));
+  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &distance, sizeof(distance));
 
-    //sending the data to the buzzer esp32
-    //if(sensor.timeoutOccurred()) { Serial.print(" TIMEOUT"); }
-      //Serial.println();
+  if(result == ESP_OK) {
+    Serial.println("Sent with success");
+  } else {
+    Serial.println("Error sending data")
+  }
 
-
-
- delay(200);
-}
-    }
+  delay(5);
 }

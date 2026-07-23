@@ -5,27 +5,17 @@
 #include <list>
 #include <unordered_set>
 
+// mac address of buzzer: AC:27:6E:7E:A3:A8
+
 
 #define I2C_SDA D4
 #define I2C_SCL D5
-
-
-/*
-//later, find a simpler way to calculate averages of quadrants
-//also double check these numbers are even correct
-std::unordered_set<int> left = {1, 2, 3, 4, 9, 10, 11, 12, 17, 18, 19, 20, 25, 26, 27, 28, 33, 34, 35, 36, 41, 42, 43, 44, 49, 50, 51, 52, 57, 58, 59, 60}; 
-std::unordered_set<int> right = {5, 6, 7, 8, 13, 14, 15, 16, 21, 22, 23, 24, 29, 30, 31, 32, 37, 38, 39, 40, 45, 46, 47, 48, 53, 54, 55, 56, 61, 62, 63, 64};
-
-//initiating variables to use later for measuring average distance of the 4 quadrants
-int average_dist_l;
-int average_dist_r;
-*/
 
 int ontime = 200;
 const int buzzerPin = D7; // GPIO pin connected to the buzzer
 int received_distance = 1;
 
-void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
+void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
     memcpy(&received_distance, incomingData, sizeof(received_distance));
     Serial.print("Data received: ");
     Serial.println(len);
@@ -36,9 +26,10 @@ void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int 
 
 
 void setup() {
-  pinMode(buzzerPin, OUTPUT);
   // Set up Serial Monitor
   Serial.begin(115200);
+  delay(1000);
+  pinMode(buzzerPin, OUTPUT);
   // Set ESP32 as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
   delay(1000);
