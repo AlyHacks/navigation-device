@@ -34,6 +34,7 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
 void setup() {
   // Initialize Serial Monitor
   Serial.begin(115200);
+  Serial.print("hello from buzzer esp32");
   
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -46,6 +47,8 @@ void setup() {
   if (esp_now_init() != ESP_OK) {
     Serial.println("Error initializing ESP-NOW");
     return;
+  } else {
+    Serial.println("success initializing esp-now");
   }
   
   // Once ESPNow is successfully Init, we will register for recv CB to
@@ -54,5 +57,6 @@ void setup() {
 }
  
 void loop() {
+  
 
 }
