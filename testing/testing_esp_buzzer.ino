@@ -59,17 +59,17 @@ void loop() {
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW); 
-    delay(distance)
+    delay(distance);
   } else if(distance < 300){
-    digitalWrite(buzzerPin, HIGH)
+    digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
     delay(distance)
   } else if (distance < 500){
-    digitalWrite(buzzerPin, HIGH)
+    digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
-    delay(distance)
+    delay(distance);
   } else {
     digitalWrite(buzzerPin, LOW);
   }
