@@ -3,7 +3,6 @@
 #include <Wire.h>
 #include "esp_wifi.h"
 
-const int buzzerPin = D7;
 const int buzzerPin = D7; // GPIO pin connected to the buzzer
 int received_distance = 1;
 int ontime = 200;
