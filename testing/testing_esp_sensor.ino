@@ -3,6 +3,7 @@
 #include <Wire.h>
 #include "esp_wifi.h"
 #include <SparkFun_VL53L5CX_Library.h>
+#include <list>
 
 #define I2C_SDA D4
 #define I2C_SCL D5
@@ -20,9 +21,9 @@ uint8_t broadcastAddress[] = {0xAC, 0x27, 0x6E, 0x7E, 0xA3, 0xA8};
 // Must match the receiver structure
 typedef struct struct_message {
   char a[32];
-  int b;
+  bool b;
   float c;
-  bool d;
+  int d;
 } struct_message;
 
 // Create a struct_message called myData
@@ -105,63 +106,52 @@ void loop() {
 
       for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
-          int distance = results.distance_mm[x+y];
-          std::string dist = std::to_string(std::abs(distance));
-          if(dist.length() == 3) {
-            Serial.print("0");
-            Serial.print(distance);
-            Serial.print(" ");
-          } else if(dist.length() == 2) {
-            Serial.print("00");
-            Serial.print(distance);
-            Serial.print(" ");
-          } else if(dist.length() == 1) {
-            Serial.print("000");
-            Serial.print(distance);
-            Serial.print(" ");
-          } else {
-            Serial.print(distance);
-            Serial.print(" ");
-              }
+          int distance = results.distance_mm[x+y];        
 
-              minimums.push_back(distance);
-          }
+            minimums.push_back(distance);
+        }
 
 
           int min;
 
-        }
+      }
+
+
           
-          if (!minimums.empty()) {
-            // Find the iterator to the minimum element
-            auto min = std::min_element(minimums.begin(), minimums.end());
+      if (!minimums.empty()) {
+        // Find the iterator to the minimum element
+        auto min = std::min_element(minimums.begin(), minimums.end());
 
             
 
-            //Serial.print("Minimum Value: ");
-            //min = *min2;
-            std::cout << "Minimum value: " << *min << std::endl;
+        //Serial.print("Minimum Value: ");
+        //min = *min2;
+        std::cout << "Minimum value: " << *min << std::endl;
 
-            Serial.println();
-          } else {
-            Serial.print("minimums is empty");
-          }  
+        Serial.println();
 
-  
-  // Set values to send
-  strcpy(myData.a, "THIS IS A CHAR");
-  myData.b = random(1,20);
-  myData.c = 1.2;
-  myData.d = false;
-  
-  // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-   
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
+        strcpy(myData.a, "THIS IS A CHAR");
+        myData.b = random(1,20);
+        myData.c = 1.2;
+        myData.d = *min;
+
+        // Send message via ESP-NOW
+        esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+        
+        if (result == ESP_OK) {
+          Serial.println("Sent with success");
+        }
+        else {
+          Serial.println("Error sending the data");
+        }
+
+      } else {
+        Serial.print("minimums is empty");
+      }  
+
+
+    }
   }
-  else {
-    Serial.println("Error sending the data");
-  }
-  delay(2000);
+
+  delay(100);
 }
