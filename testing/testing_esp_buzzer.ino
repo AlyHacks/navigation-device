@@ -3,6 +3,8 @@
 #include <Wire.h>
 #include "esp_wifi.h"
 
+const int buzzerPin = D7;
+
 // Structure example to receive data
 // Must match the sender structure
 typedef struct struct_message {
@@ -32,8 +34,11 @@ void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, in
 }
  
 void setup() {
+
+  pinMode(buzzerPin, OUTPUT);
   // Initialize Serial Monitor
   Serial.begin(115200);
+  delay(1000);
   Serial.print("hello from buzzer esp32");
   
   // Set device as a Wi-Fi Station

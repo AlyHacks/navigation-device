@@ -75,16 +75,13 @@ void setup()
 
 }
 
-void loop()
-{
+void loop() {
     std::vector<int> minimums = {};
  
 
     //Poll sensor for new data
-    if (sensor.isDataReady() == true)
-    {
-    if (sensor.getRangingData(&results)) //Read distance data into array
-    {
+    if (sensor.isDataReady() == true) {
+      if (sensor.getRangingData(&results)) { //Read distance data into array
         //The ST library returns the data transposed from zone mapping shown in datasheet
         //Pretty-print data with increasing y, decreasing x to reflect reality
 
@@ -115,7 +112,8 @@ void loop()
 
           int min;
 
-          }
+        }
+          
           if (!minimums.empty()) {
             // Find the iterator to the minimum element
             auto min = std::min_element(minimums.begin(), minimums.end());
@@ -126,10 +124,10 @@ void loop()
             //min = *min2;
             std::cout << "Minimum value: " << *min << std::endl;
 
-          Serial.println();
-        } else {
-          Serial.print("minimums is empty");
-        }  
+            Serial.println();
+          } else {
+            Serial.print("minimums is empty");
+          }  
 
                     
 /*
@@ -147,7 +145,7 @@ void loop()
         average_dist_r = average_dist_r/32;
         Serial.print("Average distance of right:");
         Serial.print(average_dist_r); */
-    }
+      }
     }
 
 /*

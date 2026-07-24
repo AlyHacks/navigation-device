@@ -2,6 +2,16 @@
 #include <WiFi.h>
 #include <Wire.h>
 #include "esp_wifi.h"
+#include <SparkFun_VL53L5CX_Library.h>
+
+#define I2C_SDA D4
+#define I2C_SCL D5
+
+SparkFun_VL53L5CX sensor;
+VL53L5CX_ResultsData results;
+
+int imageResolution = 0; 
+int imageWidth = 0;
 
 // REPLACE with buzzer MAC address: AC:27:6E:7E:A3:A8
 uint8_t broadcastAddress[] = {0xAC, 0x27, 0x6E, 0x7E, 0xA3, 0xA8};
@@ -29,6 +39,7 @@ void OnDataSent(const wifi_tx_info_t *tx_info, esp_now_send_status_t status) {
 void setup() {
   // Init Serial Monitor
   Serial.begin(115200);
+  delay(1000);
  
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
@@ -59,9 +70,84 @@ void setup() {
     return;
   }
 
+  Serial.println(sensor.getAddress());
+
+  Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
+  if (sensor.begin() == false)
+  {
+  Serial.println(F("Sensor not found - check your wiring. Freezing"));
+  while (1) ;
+  } else {
+  Serial.println("Sensor has successfully begun.");
+  }
+
+  sensor.setResolution(8*8); //Enable all 64 pads
+  
+  imageResolution = sensor.getResolution(); //Query sensor for current resolution - either 4x4 or 8x8
+  imageWidth = int(sqrt(imageResolution)); //Calculate printing width
+
+  sensor.startRanging();
+  Serial.print("sensor has started ranging.");
+
+
 }
  
 void loop() {
+
+  std::vector<int> minimums = {};
+ 
+
+  //Poll sensor for new data
+  if (sensor.isDataReady() == true) {
+    if (sensor.getRangingData(&results)) { //Read distance data into array
+        //The ST library returns the data transposed from zone mapping shown in datasheet
+        //Pretty-print data with increasing y, decreasing x to reflect reality
+
+      for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
+        for (int x = imageWidth - 1 ; x >= 0 ; x--) {
+          int distance = results.distance_mm[x+y];
+          std::string dist = std::to_string(std::abs(distance));
+          if(dist.length() == 3) {
+            Serial.print("0");
+            Serial.print(distance);
+            Serial.print(" ");
+          } else if(dist.length() == 2) {
+            Serial.print("00");
+            Serial.print(distance);
+            Serial.print(" ");
+          } else if(dist.length() == 1) {
+            Serial.print("000");
+            Serial.print(distance);
+            Serial.print(" ");
+          } else {
+            Serial.print(distance);
+            Serial.print(" ");
+              }
+
+              minimums.push_back(distance);
+          }
+
+
+          int min;
+
+        }
+          
+          if (!minimums.empty()) {
+            // Find the iterator to the minimum element
+            auto min = std::min_element(minimums.begin(), minimums.end());
+
+            
+
+            //Serial.print("Minimum Value: ");
+            //min = *min2;
+            std::cout << "Minimum value: " << *min << std::endl;
+
+            Serial.println();
+          } else {
+            Serial.print("minimums is empty");
+          }  
+
+  
   // Set values to send
   strcpy(myData.a, "THIS IS A CHAR");
   myData.b = random(1,20);
