@@ -76,5 +76,5 @@ void loop() {
   } else {
     digitalWrite(buzzerPin, LOW);
   }
-
+delay(150);
 }
