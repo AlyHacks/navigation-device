@@ -4,14 +4,17 @@
 #include "esp_wifi.h"
 
 const int buzzerPin = D7;
+const int buzzerPin = D7; // GPIO pin connected to the buzzer
+int received_distance = 1;
+int ontime = 200;
 
 // Structure example to receive data
 // Must match the sender structure
 typedef struct struct_message {
     char a[32];
-    int b;
+    bool b;
     float c;
-    bool d;
+    int d;
 } struct_message;
 
 // Create a struct_message called myData
@@ -20,17 +23,9 @@ struct_message myData;
 // callback function that will be executed when data is received
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
-  Serial.print("Bytes received: ");
-  Serial.println(len);
-  Serial.print("Char: ");
-  Serial.println(myData.a);
-  Serial.print("Int: ");
-  Serial.println(myData.b);
-  Serial.print("Float: ");
-  Serial.println(myData.c);
-  Serial.print("Bool: ");
-  Serial.println(myData.d);
-  Serial.println();
+  Serial.print("Distance: ");
+  distance = myData.d;
+  Serial.print(distance);
 }
  
 void setup() {
@@ -63,6 +58,23 @@ void setup() {
 }
  
 void loop() {
-  
+  if (distance < 100){
+    digitalWrite(buzzerPin, HIGH);
+    delay(ontime);
+    digitalWrite(buzzerPin, LOW); 
+    delay(distance)
+  } else if(distance < 300){
+    digitalWrite(buzzerPin, HIGH)
+    delay(ontime);
+    digitalWrite(buzzerPin, LOW);
+    delay(distance)
+  } else if (distance < 500){
+    digitalWrite(buzzerPin, HIGH)
+    delay(ontime);
+    digitalWrite(buzzerPin, LOW);
+    delay(distance)
+  } else {
+    digitalWrite(buzzerPin, LOW);
+  }
 
 }
