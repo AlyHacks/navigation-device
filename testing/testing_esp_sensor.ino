@@ -3,7 +3,10 @@
 #include <Wire.h>
 #include "esp_wifi.h"
 #include <SparkFun_VL53L5CX_Library.h>
+#include <iostream>
 #include <list>
+#include <algorithm>
+#include <vector>
 
 #define I2C_SDA D4
 #define I2C_SCL D5
@@ -21,8 +24,6 @@ uint8_t broadcastAddress[] = {0xAC, 0x27, 0x6E, 0x7E, 0xA3, 0xA8};
 // Must match the receiver structure
 typedef struct struct_message {
   char a[32];
-  bool b;
-  float c;
   int d;
 } struct_message;
 
@@ -96,6 +97,8 @@ void setup() {
 void loop() {
 
   std::vector<int> minimums = {};
+
+  int send_val;
  
 
   //Poll sensor for new data
@@ -106,28 +109,37 @@ void loop() {
 
       for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
-          int distance = results.distance_mm[x+y];        
+          int distance = results.distance_mm[x+y];
+          if((x+y) == 2) {
+            send_val = distance;
+          }        
 
-            minimums.push_back(distance);
+            //minimums.push_back(distance);
         }
-          int min;
+
+
+          //int min;
 
       }
 
-        
+
+      /*
       if (!minimums.empty()) {
         // Find the iterator to the minimum element
         auto min = std::min_element(minimums.begin(), minimums.end());
+
+            
+
         //Serial.print("Minimum Value: ");
         //min = *min2;
         std::cout << "Minimum value: " << *min << std::endl;
 
         Serial.println();
 
+        */
+
         strcpy(myData.a, "THIS IS A CHAR");
-        myData.b = random(1,20);
-        myData.c = 1.2;
-        myData.d = *min;
+        myData.d = send_val;
 
         // Send message via ESP-NOW
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
@@ -140,12 +152,12 @@ void loop() {
         }
 
       } else {
-        Serial.print("minimums is empty");
+        Serial.print("error");
       }  
 
 
     }
+    delay(100);
   }
 
-  delay(100);
-}
+
