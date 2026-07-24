@@ -11,6 +11,7 @@ int ontime = 200;
 // Must match the sender structure
 typedef struct struct_message {
     int d;
+    unsigned char a[32];
 } struct_message;
 
 // Create a struct_message called myData
