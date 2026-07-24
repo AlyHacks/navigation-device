@@ -3,7 +3,7 @@
 #include <Wire.h>
 #include "esp_wifi.h"
 
-const int buzzerPin = D7; // GPIO pin connected to the buzzer
+const int buzzerPin = D8; // GPIO pin connected to the buzzer
 int received_distance = 1;
 int ontime = 200;
 
@@ -17,10 +17,12 @@ typedef struct struct_message {
 // Create a struct_message called myData
 struct_message myData;
 
+int distance;
+
 // callback function that will be executed when data is received
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&myData, incomingData, sizeof(myData));
-  Serial.print("Distance: ");
+  Serial.println("Distance: ");
   distance = myData.d;
   Serial.print(distance);
 }
@@ -64,7 +66,7 @@ void loop() {
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
-    delay(distance)
+    delay(distance);
   } else if (distance < 500){
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
@@ -72,6 +74,7 @@ void loop() {
     delay(distance);
   } else {
     digitalWrite(buzzerPin, LOW);
+    Serial.print("over 500");
   }
 delay(150);
 }
