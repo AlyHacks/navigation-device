@@ -110,20 +110,14 @@ void loop() {
 
             minimums.push_back(distance);
         }
-
-
           int min;
 
       }
 
-
-          
+        
       if (!minimums.empty()) {
         // Find the iterator to the minimum element
         auto min = std::min_element(minimums.begin(), minimums.end());
-
-            
-
         //Serial.print("Minimum Value: ");
         //min = *min2;
         std::cout << "Minimum value: " << *min << std::endl;
