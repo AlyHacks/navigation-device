@@ -14,3 +14,6 @@ void setup() {
 
 void loop() {
 }
+
+//red esp32 - AC:27:6E:7F:79:10
+//orange esp32 - AC:27:6E:7D:5A:D8
