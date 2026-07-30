@@ -62,7 +62,7 @@ void setup() {
  
 void loop() {
 
-  if (distance < 500){
+  if (received_minimum < 500){
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
