@@ -6,8 +6,8 @@
 #include <iostream>
 #include <algorithm>
 
-#define I2C_SDA D4
-#define I2C_SCL D5
+#define I2C_SDA D2
+#define I2C_SCL D3
 
 SparkFun_VL53L5CX sensor;
 VL53L5CX_ResultsData results;
