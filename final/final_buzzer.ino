@@ -17,7 +17,9 @@ typedef struct struct_message {
 } struct_message;
 */
 
-int received_minimum;
+int bignum = 1000000;
+int received_minimum = bignum;
+int delaynum;
 
 // Create a struct_message called myData
 //struct_message myData;
@@ -58,6 +60,11 @@ void setup() {
   // Once ESPNow is successfully Init, we will register for recv CB to
   // get recv packer info
   esp_now_register_recv_cb(OnDataRecv);
+
+  // startup buzz
+  digitalWrite(buzzerPin, HIGH);
+  delay(ontime);
+  digitalWrite(buzzerPin, LOW);
 }
  
 void loop() {
@@ -66,7 +73,9 @@ void loop() {
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
-    delay(received_minimum);
+    delaynum = received_minimum;
+    received_minimum = bignum;
+    delay(delaynum);
   } else {
     digitalWrite(buzzerPin, LOW);
     Serial.print("over 500");
