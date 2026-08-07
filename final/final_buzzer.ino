@@ -17,9 +17,14 @@ typedef struct struct_message {
 } struct_message;
 */
 
+/*
 int bignum = 1000000;
 int received_minimum = bignum;
 int delaynum;
+//restore this later??
+*/ 
+
+int received_minimum;
 
 // Create a struct_message called myData
 //struct_message myData;
@@ -69,13 +74,16 @@ void setup() {
  
 void loop() {
 
-  if (received_minimum < 500){
+  Serial.print("Received minimum: ");
+  Serial.print(received_minimum);
+
+  if (received_minimum < 1000){
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
-    delaynum = received_minimum;
-    received_minimum = bignum;
-    delay(delaynum);
+    //delaynum = received_minimum;
+    //received_minimum = bignum;
+    delay(received_minimum);
   } else {
     digitalWrite(buzzerPin, LOW);
     Serial.print("over 500");
