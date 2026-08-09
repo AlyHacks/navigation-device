@@ -40,7 +40,7 @@ void loop() {
   if (received_minimum < 1000 || received_minimum == 1000){
     digitalWrite(LED_PIN, HIGH);
   } else {
-    digitalWrite(buzzerPin, LOW);
+    digitalWrite(LED_PIN, LOW);
     Serial.print("over 1000");
   }
 
