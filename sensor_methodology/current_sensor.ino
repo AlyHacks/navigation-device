@@ -42,7 +42,7 @@ void setup() {
   esp_wifi_set_ps(WIFI_PS_NONE);
   esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE);
 
-  Wire.begin();
+  Wire.begin(I2C_SDA, I2C_SCL);
   Wire.setClock(400000);
 
   // Init ESP-NOW
@@ -66,7 +66,7 @@ void setup() {
     return;
   }
 
-  Serial.println(sensor.getAddress());
+  // Serial.println(sensor.getAddress());
 
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false)
@@ -101,12 +101,15 @@ void loop() {
       for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
           int distance = results.distance_mm[x+y];
-          if(distance < minimum) {
+
+          int status = results.target_status[idx];
+          if (status == 5 && distance < minimum) { // status 5 means valid target
             minimum = distance;
           }
         }
-
       }
+
+    }
 
         // Send message via ESP-NOW
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &minimum, sizeof(minimum));
@@ -122,9 +125,9 @@ void loop() {
         Serial.print("error");
       }  
 
-
-    }
     delay(100);
-  }
+}
+    
+  
 
 
