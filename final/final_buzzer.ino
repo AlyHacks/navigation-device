@@ -6,6 +6,7 @@
 const int buzzerPin = D8; // GPIO pin connected to the buzzer
 //int received_distance = 1;
 int ontime = 200;
+const long timeout = 1500; // 1500 milliseconds
 
 // Structure example to receive data
 // Must match the sender structure
@@ -34,11 +35,15 @@ int received_minimum;
 // callback function that will be executed when data is received
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&received_minimum, incomingData, sizeof(received_minimum));
+
+  lastReceived = millis(); // distance between the last data receival in milliseconds
+
   Serial.println("Distance: ");
   Serial.print(received_minimum);
 }
  
 void setup() {
+  unsigned long time = millis();
 
   pinMode(buzzerPin, OUTPUT);
   // Initialize Serial Monitor
@@ -77,7 +82,10 @@ void loop() {
   Serial.print("Received minimum: ");
   Serial.print(received_minimum);
 
-  if (received_minimum < 1000){
+  if(time - lastReceived > timeout) { // if the distance between now and the last data receival is greater than the timout...
+    digitalWrite(buzzerPin, LOW); // ...then turn off buzzer
+    Serial.println("nothing received from sensor");
+  } else if (received_minimum < 1000){
     digitalWrite(buzzerPin, HIGH);
     delay(ontime);
     digitalWrite(buzzerPin, LOW);
