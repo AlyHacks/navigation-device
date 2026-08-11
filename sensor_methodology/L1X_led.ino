@@ -4,7 +4,7 @@
 
 const int LED_PIN = D10;
 
-volatile int received_minimum;
+int received_minimum;
 
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
   memcpy(&received_minimum, incomingData, sizeof(received_minimum));
@@ -35,11 +35,13 @@ void setup() {
 void loop() {
   if (received_minimum <= 1000){
     digitalWrite(LED_PIN, HIGH);
+    delay(100);
+    digitalWrite(LED_PIN, LOW);
+    delay(100);
   } else {
     digitalWrite(LED_PIN, LOW);
-    Serial.print("over 1000");
   }
 
-delay(100);
+//delay(100);
 
 }

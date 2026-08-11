@@ -5,8 +5,8 @@
 #include <WiFi.h>
 #include <Wire.h>
 #include <VL53L1X.h>
-#define SDA_PIN 8
-#define SCL_PIN 9
+#define SDA_PIN 5
+#define SCL_PIN 4
 
 
 
