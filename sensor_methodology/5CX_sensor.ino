@@ -102,7 +102,7 @@ void loop() {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
           int distance = results.distance_mm[x+y];
 
-          int status = results.target_status[idx];
+          int status = results.target_status[x+y];
           if (status == 5 && distance < minimum) { // status 5 means valid target
             minimum = distance;
           }
