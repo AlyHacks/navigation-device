@@ -15,8 +15,8 @@ VL53L5CX_ResultsData results;
 int imageResolution = 0; 
 int imageWidth = 0;
 
-//led MAC address: 94:A9:90:77:70:D0
-uint8_t broadcastAddress[] = {0x94, 0xA9, 0x90, 0x77, 0x70, 0xD0};
+// REPLACE with white led MAC address: AC:27:6E:7D:38:40
+uint8_t broadcastAddress[] = {0xAC, 0x27, 0x6E, 0x7D, 0x38, 0x40};
 
 // Structure example to send data
 // Must match the receiver structure
@@ -42,7 +42,7 @@ void setup() {
   esp_wifi_set_ps(WIFI_PS_NONE);
   esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE);
 
-  Wire.begin(I2C_SDA, I2C_SCL);
+  Wire.begin();
   Wire.setClock(400000);
 
   // Init ESP-NOW
@@ -66,7 +66,7 @@ void setup() {
     return;
   }
 
-  // Serial.println(sensor.getAddress());
+  Serial.println(sensor.getAddress());
 
   Serial.println("Initializing sensor board. This can take up to 10s. Please wait.");
   if (sensor.begin() == false)
@@ -101,15 +101,12 @@ void loop() {
       for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
           int distance = results.distance_mm[x+y];
-
-          int status = results.target_status[x+y];
-          if (status == 5 && distance < minimum) { // status 5 means valid target
+          if(distance < minimum) {
             minimum = distance;
           }
         }
-      }
 
-    }
+      }
 
         // Send message via ESP-NOW
         esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &minimum, sizeof(minimum));
@@ -125,9 +122,9 @@ void loop() {
         Serial.print("error");
       }  
 
+
+    }
     delay(100);
-}
-    
-  
+  }
 
 
