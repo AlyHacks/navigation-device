@@ -8,7 +8,7 @@ const int buzzerPin = D8; // GPIO pin connected to the buzzer
 int ontime = 200;
 const long timeout = 1500; // 1500 milliseconds
 
-volatile unsigned long lastReceived = 0;
+unsigned long lastReceived = 0;
 
 // Structure example to receive data
 // Must match the sender structure
