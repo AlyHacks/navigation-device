@@ -7,10 +7,15 @@ const int LED_PIN = D10;
 int received_minimum;
 int ontime = 200;
 
+unsigned long lastReceived = 0;
+const unsigned long TIMEOUT = 1000; //milliseconds
+
+
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
-  memcpy(&received_minimum, incomingData, sizeof(received_minimum));
-  //Serial.println("Distance: ");
-  //Serial.print(received_minimum);
+  if (len == sizeof(received_minimum)) {
+    memcpy(&received_minimum, incomingData, sizeof(received_minimum));
+    lastReceived = millis();
+  }
 }
 
 void setup() {
@@ -34,8 +39,11 @@ void setup() {
 }
 
 void loop() {
+
+  bool dataIsFresh = (millis() - lastReceived) < TIMEOUT;
+
   Serial.println(received_minimum);
-  if (received_minimum <= 500){
+  if (dataIsFresh && received_minimum <= 500){
     digitalWrite(LED_PIN, HIGH);
     delay(ontime);
     digitalWrite(LED_PIN, LOW);
