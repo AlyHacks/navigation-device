@@ -91,19 +91,27 @@ void setup() {
 void loop() {
 
   int minimum = 1000000; //fake value to be replaced in the minimum logic
- 
+  int lastDataTimes;
   //Poll sensor for new data
   if (sensor.isDataReady() == true) {
+    int noDataCounter = 0;
     if (sensor.getRangingData(&results)) { //Read distance data into array
         //The ST library returns the data transposed from zone mapping shown in datasheet
         //Pretty-print data with increasing y, decreasing x to reflect reality
-
+      lastDataTimes = millis();
       for (int y = 0 ; y <= imageWidth * (imageWidth - 1) ; y += imageWidth) {
         for (int x = imageWidth - 1 ; x >= 0 ; x--) {
-          int distance = results.distance_mm[x+y];
-          if(distance < minimum) {
+
+          int idx = x + y;
+          int distance = results.distance_mm[idx];
+          int status = results.target_status[idx];
+
+          if (status == 5 && distance > 0 && distance < minimum) {
             minimum = distance;
           }
+          Serial.print(millis());
+          Serial.print(" minimum=");
+          Serial.println(minimum);
         }
 
       }
@@ -120,11 +128,15 @@ void loop() {
 
       } else {
         Serial.print("error");
+        noDataCounter++;
       }  
-
+      if (noDataCounter % 20 == 0) { // every ~2s at 100ms loop delay
+      Serial.print(millis());
+      Serial.print(" isDataReady false, last good data at ");
+      Serial.println(lastDataTimes);
 
     }
     delay(100);
   }
-
+}
 
