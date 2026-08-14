@@ -1,103 +1,172 @@
+
+
+
+
+// Include Libraries
 #include <esp_now.h>
 #include <WiFi.h>
-#include <Wire.h>
-#include "esp_wifi.h"
+//#include <TimeLib.h>
 
-const int buzzerPin = D8; // GPIO pin connected to the buzzer
-//int received_distance = 1;
-int ontime = 200;
-const long timeout = 1500; // 1500 milliseconds
 
-unsigned long lastReceived = 0;
 
-// Structure example to receive data
-// Must match the sender structure
 
-/*
-typedef struct struct_message {
-    unsigned char a[32];
-    int d;
-} struct_message;
-*/
+const int ledPin = 4;
 
-/*
-int bignum = 1000000;
-int received_minimum = bignum;
-int delaynum;
-//restore this later??
-*/ 
 
-int received_minimum;
 
-// Create a struct_message called myData
-//struct_message myData;
 
-//int distance;
+// Create a structured object
+float received_distance = 10000;
 
-// callback function that will be executed when data is received
-void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
-  memcpy(&received_minimum, incomingData, sizeof(received_minimum));
 
-  lastReceived = millis(); // distance between the last data receival in milliseconds
+int ontime = 500;
+int distMult = 5;
 
-  Serial.println("Distance: ");
-  Serial.print(received_minimum);
+
+#define bignum 10000000;
+
+
+unsigned long next_pulse = millis() + bignum;
+unsigned long pot_next_pulse = next_pulse;
+unsigned long cur_time;
+unsigned long end_pulse;
+
+
+
+
+
+
+
+
+
+
+
+
+// Callback function executed when data is received
+void OnDataRecv(const esp_now_recv_info * mac, const uint8_t *incomingData, int len) {
+ memcpy(&received_distance, incomingData, sizeof(received_distance));
+ Serial.print("Data received: ");
+ Serial.println(len);
+ Serial.print("Distance:");
+ Serial.println(received_distance);
+ Serial.println();
+
+
+
+
 }
- 
+
+
+
+
+
+
+
+
 void setup() {
-  unsigned long time = millis();
+ pinMode(ledPin, OUTPUT);
 
-  pinMode(buzzerPin, OUTPUT);
-  // Initialize Serial Monitor
-  Serial.begin(115200);
-  delay(1000);
-  Serial.print("hello from buzzer esp32");
-  
-  // Set device as a Wi-Fi Station
-  WiFi.mode(WIFI_STA);
-  esp_wifi_set_ps(WIFI_PS_NONE);
-  esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE);
 
-  Wire.begin();
-  Wire.setClock(400000);
 
-  // Init ESP-NOW
-  if (esp_now_init() != ESP_OK) {
-    Serial.println("Error initializing ESP-NOW");
-    return;
-  } else {
-    Serial.println("success initializing esp-now");
-  }
-  
-  // Once ESPNow is successfully Init, we will register for recv CB to
-  // get recv packer info
-  esp_now_register_recv_cb(OnDataRecv);
 
-  // startup buzz
-  digitalWrite(buzzerPin, HIGH);
-  delay(ontime);
-  digitalWrite(buzzerPin, LOW);
+ // Set up Serial Monitor
+ Serial.begin(115200);
+ // Set ESP32 as a Wi-Fi Station
+ WiFi.mode(WIFI_STA);
+
+
+
+
+
+
+
+
+ // Initilize ESP-NOW
+ if (esp_now_init() != ESP_OK) {
+   Serial.println("Error initializing ESP-NOW");
+   return;
+ }
+ // Register callback function
+ esp_now_register_recv_cb(OnDataRecv);
+
+
+// single buzz on startup
+   digitalWrite(ledPin, HIGH);
+   delay(ontime);
+   digitalWrite(ledPin,LOW);
+
+
 }
- 
+
+
+// At one point in time we start the loop
+
+
+
+
+//            X
+// start   next pulse   end pulse
+//   |        |           |
+// ------------------------------
+
+
+//we take next pulse off the list and make it a huge number after that pulse ends at end pulse
+
+
+// if there is a distance received then the code will predict the potential next pulse, if that potential next pulse is going to happen BEFORE the actual next pulse then it replaces the next pulse. But if the potential next pulse is predicted to be AFTER the next pulse then the pulse will jsut happen at next pulse.
+
+
+
+
+
+
 void loop() {
+ cur_time = millis();// everymillis we check the time in the loop
 
-  Serial.print("Received minimum: ");
-  Serial.print(received_minimum);
 
-  if(time - lastReceived > timeout) { // if the distance between now and the last data receival is greater than the timout...
-    digitalWrite(buzzerPin, LOW); // ...then turn off buzzer
-    Serial.println("nothing received from sensor");
-  } else if (received_minimum < 1000){
-    digitalWrite(buzzerPin, HIGH);
-    delay(ontime);
-    digitalWrite(buzzerPin, LOW);
-    //delaynum = received_minimum;
-    //received_minimum = bignum;
-    delay(received_minimum);
-  } else {
-    digitalWrite(buzzerPin, LOW);
-    Serial.print("over 500");
-  }
+ if(cur_time > next_pulse){ // If the time of the current pulse that is happnening in the moment is passing(interrupting) the time of the next pulse then it turns the buzzer on for that next pulse and also sets end pulse to next pulse plus a new really big variable
+   //start buzz
+   digitalWrite(ledPin, HIGH);
+   end_pulse = next_pulse + ontime;
+   next_pulse = cur_time + bignum;
+ }
+ if(cur_time > end_pulse){ //Checking when the
+   //end buzz
+   digitalWrite(ledPin, LOW);
+   //digitalWrite(ledPin, LOW);
+ }
 
-delay(150);
+
+
+
+ if (received_distance < 50){
+   //per_end_pulse = cur_time + ontime;
+   pot_next_pulse = ontime + 10 + cur_time; //potential next pulse
+ }
+ else if (received_distance < 200){
+   pot_next_pulse = distMult*(received_distance/5) + ontime + cur_time;
+ }
+ else if (received_distance <= 1000 && received_distance >= 200)  {    //led blinks if 10 cm or less away
+   pot_next_pulse = distMult*(received_distance/10) + ontime + cur_time;
+ }
+ else if (received_distance <= 3000) {
+   pot_next_pulse = distMult*(received_distance/10) + ontime + cur_time;
+ }
+ else {
+   //digitalWrite(ledPin, LOW);
+
+
+ }
+
+
+ if(pot_next_pulse < next_pulse){
+   next_pulse = pot_next_pulse;
+ }
+ //delayMicroseconds(300);
+
+
+
+
 }
+
+
